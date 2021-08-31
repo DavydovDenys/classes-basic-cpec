@@ -2,7 +2,6 @@
 
 require_relative 'car'
 require_relative 'bike'
-require 'pry'
 
 # class DeliveryService
 class DeliveryService
@@ -15,6 +14,8 @@ class DeliveryService
   end
 
   def create_delivery(weight, distance)
+    raise 'Argument must be a number.' unless weight.is_a?(Integer) || distance.is_a?(Integer)
+
     vehicles = @autopark.select { |item| item.max_weight >= weight }
 
     add_function_to_object(vehicles, 'max_distance')
@@ -31,17 +32,29 @@ class DeliveryService
   private
 
   def select_priority(vehicles)
+    vehicles.sort_by!(&:max_weight)
+
+    vehicle_start = vehicles.first
+    vehicle_end = vehicles.last
     garage = []
-    vehicle = vehicles.first
-    vehicles.each do |item|
-      return garage << vehicle if vehicle < item
-
-      return garage << item if vehicle > item
-
-      garage << item
+    if (vehicle_start <=> vehicle_end).zero?
+      vehicles.first.available = false
+      vehicles.shift
+      vehicles
+    else
+      add_the_smallest(garage, vehicles, vehicle_end)
     end
-    garage.first.available = false
-    garage
+  end
+
+  def add_the_smallest(store, collection, object)
+    collection[0...collection.size - 1].each do |item|
+      store << item if item < object
+    end
+    raise 'Transport unavailable.' if store.empty?
+
+    store.first.available = false
+    store.shift
+    store
   end
 
   def add_function_to_object(object, function)
