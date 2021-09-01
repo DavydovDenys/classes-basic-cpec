@@ -5,20 +5,20 @@ require_relative 'bike'
 
 # class DeliveryService
 class DeliveryService
-  attr_reader :cars, :bikes, :autopark
+  attr_reader :autopark
 
   def initialize
-    @cars  = Array.new(Constants::CARS[:quantity]) { Car.new }
-    @bikes = Array.new(Constants::BIKES[:quantity]) { Bike.new }
-    @autopark = @cars + @bikes
+    @autopark = []
+    Constants::CARS[:quantity].times { autopark << Car.new }
+    Constants::BIKES[:quantity].times { autopark << Bike.new }
   end
 
   def create_delivery(weight, distance)
-    raise 'Argument must be a number.' unless weight.is_a?(Integer) || distance.is_a?(Integer)
+    raise 'Argument must be a number.' unless weight.is_a?(Integer) && distance.is_a?(Integer)
 
     vehicles = @autopark.select { |item| item.max_weight >= weight }
 
-    add_function_to_object(vehicles, 'max_distance')
+    add_function_max_distance_to_object_car(vehicles, :max_distance)
 
     vehicles.select! { |item| item.max_distance >= distance }
     raise 'Does not fit the requirements.' if vehicles.empty?
@@ -57,9 +57,9 @@ class DeliveryService
     store
   end
 
-  def add_function_to_object(object, function)
+  def add_function_max_distance_to_object_car(object, function)
     object.each do |item|
-      next if item.respond_to?(function.to_sym)
+      next if item.respond_to?(function)
 
       def item.max_distance
         Float::INFINITY

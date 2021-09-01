@@ -4,36 +4,22 @@ describe DeliveryService do
   let(:delivery_service) { described_class.new }
 
   describe '.new' do
-    it do
+    it 'returns the DeliveryService object' do
       expect(delivery_service).to be_instance_of(DeliveryService)
     end
   end
 
   describe '#autopark' do
-    let(:autopark) { delivery_service.cars + delivery_service.bikes }
+    let(:autopark) { [Car.new, Bike.new] }
 
-    it do
+    it 'returns an Array' do
       expect(delivery_service.autopark).to be_kind_of(Array)
     end
 
     it 'returns array with Car and Bike objects' do
-      allow(delivery_service).to receive(:cars).and_return([Car.new])
-      allow(delivery_service).to receive(:bikes).and_return([Bike.new])
       allow(delivery_service).to receive(:autopark).and_return(autopark)
 
       expect(delivery_service.autopark).to eq(autopark)
-    end
-  end
-
-  describe '#cars' do
-    it do
-      expect(delivery_service.cars.first).to be_kind_of(Car)
-    end
-  end
-
-  describe '#bikes' do
-    it do
-      expect(delivery_service.bikes.first).to be_kind_of(Bike)
     end
   end
 
@@ -69,15 +55,17 @@ describe DeliveryService do
       end
 
       it 'changes (available = true) to false' do
-        bikes = delivery_service.bikes.select(&:available)
+        bikes = delivery_service.autopark.select { |item| item.is_a?(Bike) }
+        available_bikes = bikes.select(&:available)
 
-        expect(bikes.count).to eq(3)
+        expect(available_bikes.count).to eq(3)
 
         delivery_service.create_delivery(10, 20)
 
-        bikes = delivery_service.bikes.select(&:available)
+        bikes = delivery_service.autopark.select { |item| item.is_a?(Bike) }
+        available_bikes = bikes.select(&:available)
 
-        expect(bikes.count).to eq(2)
+        expect(available_bikes.count).to eq(2)
       end
     end
 
@@ -87,15 +75,16 @@ describe DeliveryService do
       end
 
       it 'does not change (available = true) to false' do
-        bikes = delivery_service.bikes.select(&:available)
+        bikes = delivery_service.autopark.select { |item| item.is_a?(Bike) }
+        available_bikes = bikes.select(&:available)
 
-        expect(bikes.count).to eq(3)
+        expect(available_bikes.count).to eq(3)
 
         delivery_service.create_delivery(100, 20)
 
-        bikes = delivery_service.bikes.select(&:available)
+        available_bikes = bikes.select(&:available)
 
-        expect(bikes.count).to eq(3)
+        expect(available_bikes.count).to eq(3)
       end
     end
 
@@ -105,15 +94,16 @@ describe DeliveryService do
       end
 
       it 'changes (available = true) to false' do
-        cars = delivery_service.cars.select(&:available)
+        cars = delivery_service.autopark.select { |item| item.is_a?(Car) }
+        available_cars = cars.select(&:available)
 
-        expect(cars.count).to eq(2)
+        expect(available_cars.count).to eq(2)
 
         delivery_service.create_delivery(100, 20)
 
-        cars = delivery_service.cars.select(&:available)
+        available_cars = cars.select(&:available)
 
-        expect(cars.count).to eq(1)
+        expect(available_cars.count).to eq(1)
       end
     end
 
@@ -123,15 +113,16 @@ describe DeliveryService do
       end
 
       it 'does not change (available = true) to false' do
-        cars = delivery_service.cars.select(&:available)
+        cars = delivery_service.autopark.select { |item| item.is_a?(Car) }
+        available_cars = cars.select(&:available)
 
-        expect(cars.count).to eq(2)
+        expect(available_cars.count).to eq(2)
 
         delivery_service.create_delivery(10, 20)
 
-        cars = delivery_service.cars.select(&:available)
+        available_cars = cars.select(&:available)
 
-        expect(cars.count).to eq(2)
+        expect(available_cars.count).to eq(2)
       end
     end
   end
