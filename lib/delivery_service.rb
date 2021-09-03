@@ -1,36 +1,69 @@
+# frozen_string_literal: true
+
 require_relative 'car'
 require_relative 'bike'
 
+# class DeliveryService
 class DeliveryService
-  attr_reader :cars, :bikes
+  attr_reader :autopark
 
   def initialize
-    @cars  = Array.new(Constants::CARS[:quantity]) { Car.new }
-    @bikes = Array.new(Constants::BIKES[:quantity]) { Bike.new }
+    @autopark = []
+    Constants::CARS[:quantity].times { autopark << Car.new }
+    Constants::BIKES[:quantity].times { autopark << Bike.new }
   end
 
   def create_delivery(weight, distance)
-    bike_availability = @bikes.map(&:available)
-    car_availability  = @cars.map(&:available)
+    raise 'Argument must be a number.' unless weight.is_a?(Integer) && distance.is_a?(Integer)
 
-    # by bike
-    if weight <= 10 && distance <= 30
-      if bike_availability.include?(true)
-        available_bike = bike_availability.find_index(true)
-        @bikes[available_bike].available = false
-        'by bike'
-      else
-        'bike unavailable, try again later.'
-      end
-    # by car
+    vehicles = @autopark.select { |item| item.max_weight >= weight }
+
+    add_function_max_distance_to_object_car(vehicles, :max_distance)
+
+    vehicles.select! { |item| item.max_distance >= distance }
+    raise 'Does not fit the requirements.' if vehicles.empty?
+
+    vehicles.select!(&:available)
+    raise 'Transport unavailable.' if vehicles.empty?
+
+    select_priority(vehicles)
+  end
+
+  private
+
+  def select_priority(vehicles)
+    vehicles.sort_by!(&:max_weight)
+
+    vehicle_start = vehicles.first
+    vehicle_end = vehicles.last
+    garage = []
+    if (vehicle_start <=> vehicle_end).zero?
+      vehicles.first.available = false
+      vehicles.shift
+      vehicles
     else
-      if car_availability.include?(true)
-        available_car = car_availability.find_index(true)
-        @cars[available_car].available = false
-        'by car'
-      else
-        'car unavailable, try again later.'
+      add_the_smallest(garage, vehicles, vehicle_end)
+    end
+  end
+
+  def add_the_smallest(store, collection, object)
+    collection[0...collection.size - 1].each do |item|
+      store << item if item < object
+    end
+    raise 'Transport unavailable.' if store.empty?
+
+    store.first.available = false
+    store.shift
+    store
+  end
+
+  def add_function_max_distance_to_object_car(object, function)
+    object.each do |item|
+      next if item.respond_to?(function)
+
+      def item.max_distance
+        Float::INFINITY
       end
-    end 
+    end
   end
 end
