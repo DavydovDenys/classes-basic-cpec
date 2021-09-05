@@ -9,5 +9,6 @@ class Car < Transport
 
   def initialize
     super(Constants::CARS[:max_weight], Constants::CARS[:speed], true)
+    park << self
   end
 end
