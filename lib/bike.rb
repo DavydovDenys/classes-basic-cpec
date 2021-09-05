@@ -10,5 +10,6 @@ class Bike < Transport
   def initialize
     super(Constants::BIKES[:max_weight], Constants::BIKES[:speed], true)
     @max_distance = Constants::BIKES[:max_distance]
+    park << self
   end
 end
