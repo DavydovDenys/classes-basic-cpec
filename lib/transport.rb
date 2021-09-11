@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'pry'
 # class Transport
 class Transport
@@ -7,7 +8,7 @@ class Transport
   attr_accessor :available
   attr_reader :max_weight, :speed, :location, :number_of_deliveries, :delivery_cost
 
-  @@park = []
+  @park = []
 
   def <=>(other)
     delivery_speed_by_weight <=> other.delivery_speed_by_weight
@@ -17,43 +18,40 @@ class Transport
     @max_weight = max_weight
     @speed = speed.to_f
     @available = available
-    @location = 'in garage'
+    @location = Constants::LOCATION[0]
     @number_of_deliveries = 0
     @delivery_cost = 0
+    self.class.park << self
   end
 
-  def self.filter_by(attribute, &block)
-    objects_with_given_attributes = @@park.select { |p| p.respond_to?(attribute) }
-    return objects_with_given_attributes.to_enum(:each) unless block_given?
+  class << self
+    attr_reader :park
 
-    result = []
-    objects_with_given_attributes.each do |object|
-      if block.call(object.send(attribute))
-        result << object
-      end
+    def filter_by(attribute, &block)
+      objects_with_given_attributes = park.select { |p| p.respond_to?(attribute) }
+      return objects_with_given_attributes.to_enum(:each) unless block_given?
+
+      objects_with_given_attributes
+        .map { |object| object if block.call(object.public_send(attribute)) }
+        .compact
     end
-    result
-  end
 
-  def self.find_by(attribute, value)
-    objects_with_given_attributes = @@park.select { |p| p.respond_to?(attribute) }
+    def find_by(attribute, value)
+      objects_with_given_attributes = park.select { |p| p.respond_to?(attribute) }
 
-    result = nil
-    objects_with_given_attributes.each do |object|
-      if object.send(attribute) == value
-        result = object
-        break
+      result = nil
+      objects_with_given_attributes.each do |object|
+        if object.send(attribute) == value
+          result = object
+          break
+        end
       end
+      result
     end
-    result
-  end
 
-  def self.all
-    @@park.select { |p| p.is_a?(self) }
-  end
-
-  def park
-    @@park
+    def all
+      @park
+    end
   end
 
   def delivery_time(distance)

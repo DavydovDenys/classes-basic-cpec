@@ -9,8 +9,8 @@ class DeliveryService
 
   def initialize
     @autopark = []
-    Constants::CARS[:quantity].times { autopark << Car.new }
-    Constants::BIKES[:quantity].times { autopark << Bike.new }
+    Constants::Cars::QUANTITY.times { autopark << Car.new }
+    Constants::Bikes::QUANTITY.times { autopark << Bike.new }
   end
 
   def create_delivery(weight, distance)
