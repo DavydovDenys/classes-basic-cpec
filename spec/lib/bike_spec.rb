@@ -2,9 +2,9 @@
 
 describe Bike do
   let(:bike) { described_class.new }
-  let(:speed) { Constants::BIKES[:speed] }
-  let(:max_weight) { Constants::BIKES[:max_weight] }
-  let(:max_distance) { Constants::BIKES[:max_distance] }
+  let(:speed) { Constants::Bikes::SPEED }
+  let(:max_weight) { Constants::Bikes::MAX_WEIGHT }
+  let(:max_distance) { Constants::Bikes::MAX_DISTANCE }
 
   describe '.new' do
     it do
