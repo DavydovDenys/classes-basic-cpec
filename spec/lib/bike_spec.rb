@@ -8,7 +8,7 @@ describe Bike do
 
   describe '.new' do
     it do
-      expect(bike).to be_instance_of(Bike)
+      expect(bike).to be_instance_of(described_class)
     end
   end
 

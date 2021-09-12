@@ -7,7 +7,7 @@ describe Car do
 
   describe '.new' do
     it do
-      expect(car).to be_instance_of(Car)
+      expect(car).to be_instance_of(described_class)
     end
   end
 

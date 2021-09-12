@@ -5,7 +5,7 @@ describe DeliveryService do
 
   describe '.new' do
     it 'returns the DeliveryService object' do
-      expect(delivery_service).to be_instance_of(DeliveryService)
+      expect(delivery_service).to be_instance_of(described_class)
     end
   end
 
@@ -24,7 +24,7 @@ describe DeliveryService do
   end
 
   describe '#create_delivery' do
-    context 'errors' do
+    describe 'errors' do
       context 'when invalid arguments' do
         it 'returns RuntimeError' do
           expect { delivery_service.create_delivery('weight', '20') }
