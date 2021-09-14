@@ -7,8 +7,10 @@ require_relative 'constants'
 class Bike < Transport
   attr_reader :max_distance
 
+  @park = []
+
   def initialize
-    super(Constants::BIKES[:max_weight], Constants::BIKES[:speed], true)
-    @max_distance = Constants::BIKES[:max_distance]
+    super(Constants::Bikes::MAX_WEIGHT, Constants::Bikes::SPEED, true)
+    @max_distance = Constants::Bikes::MAX_DISTANCE
   end
 end

@@ -7,7 +7,9 @@ require_relative 'constants'
 class Car < Transport
   attr_accessor :number
 
+  @park = []
+
   def initialize
-    super(Constants::CARS[:max_weight], Constants::CARS[:speed], true)
+    super(Constants::Cars::MAX_WEIGHT, Constants::Cars::SPEED, true)
   end
 end

@@ -2,12 +2,12 @@
 
 describe Car do
   let(:car) { described_class.new }
-  let(:speed) { Constants::CARS[:speed] }
-  let(:max_weight) { Constants::CARS[:max_weight] }
+  let(:speed) { Constants::Cars::SPEED }
+  let(:max_weight) { Constants::Cars::MAX_WEIGHT }
 
   describe '.new' do
     it do
-      expect(car).to be_instance_of(Car)
+      expect(car).to be_instance_of(described_class)
     end
   end
 
